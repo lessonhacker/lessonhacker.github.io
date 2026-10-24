@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["2XC58K8AF4.com.katmorgan.magpie"],
+        "components": [
+          { "/": "/magpie/join/*", "comment": "Invite and open links. Everything is in the fragment." }
+        ]
+      }
+    ]
+  }
+}

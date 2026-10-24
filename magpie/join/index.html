@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Magpie invite</title>
+<meta name="description" content="Wishlists where the surprises stay secret. Open this in Magpie.">
+<meta property="og:title" content="Magpie">
+<meta property="og:description" content="Wishlists where the surprises stay secret. Open this in Magpie.">
+<meta property="og:image" content="https://lessonhacker.github.io/magpie/assets/og-1200x630.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="Magpie">
+<meta property="og:type" content="website">
+<meta name="robots" content="noindex">
+<link rel="apple-touch-icon" href="/magpie/assets/apple-touch-icon.png">
+<link rel="stylesheet" href="/magpie/assets/style.css">
+</head>
+<body>
+<main>
+  <img class="mark" src="/magpie/assets/icon-512.png" alt="">
+  <h1 id="title">Magpie</h1>
+  <p class="lede" id="lede">Wishlists where the surprises stay secret.</p>
+
+  <div id="ok" class="hidden">
+    <a class="button" id="open" href="#">Open in Magpie</a>
+    <div class="card" style="margin-top: 24px">
+      <h2>Don't have Magpie yet?</h2>
+      <p>Magpie isn't in the App Store yet. Ask whoever sent you this how to get it, then come back to their message and tap the link again.</p>
+    </div>
+    <p class="small">On a child's iPhone or iPad, Magpie is installed by their grown-up.</p>
+  </div>
+
+  <div id="broken" class="hidden">
+    <div class="card">
+      <h2>This link isn't complete</h2>
+      <p>Part of it went missing on the way. Ask whoever sent it to send it again from Magpie.</p>
+    </div>
+  </div>
+
+  <p class="foot"><a href="/magpie/">About Magpie</a> · <a href="/magpie/privacy/">Privacy</a></p>
+</main>
+<script>
+// The invite lives in the fragment, which browsers never send to the server, so nothing about
+// whose lists these are reaches any log. Mirrors InviteLink.decode in MagpieCore.
+(function () {
+  function decode(hash) {
+    try {
+      var b64 = hash.replace(/-/g, "+").replace(/_/g, "/");
+      while (b64.length % 4) b64 += "=";
+      var bytes = Uint8Array.from(atob(b64), function (c) { return c.charCodeAt(0); });
+      var p = JSON.parse(new TextDecoder().decode(bytes));
+      if (p.v !== 1 || (p.k !== "seat" && p.k !== "open")) return null;
+      if (!/^[0-9a-f]{16}$/.test(p.c)) return null;
+      if (["wisher", "curator", "giver"].indexOf(p.r) < 0) return null;
+      if (!Array.isArray(p.s) || p.s.length < 1 || p.s.length > 2) return null;
+      return p;
+    } catch (e) { return null; }
+  }
+  var hash = location.hash.slice(1);
+  var p = hash ? decode(hash) : null;
+  if (!p) { document.getElementById("broken").classList.remove("hidden"); return; }
+
+  var name = String(p.n || "").slice(0, 40), owner = String(p.o || "").slice(0, 40);
+  var accents = { wisher: "--berry", curator: "--berry", giver: "--lagoon" };
+  document.documentElement.style.setProperty("--accent", "var(" + accents[p.r] + ")");
+  var title = document.getElementById("title"), lede = document.getElementById("lede");
+  if (p.r === "wisher") {
+    title.textContent = "Your Magpie lists";
+    lede.textContent = (owner || "Your grown-up") + " has set up your lists. Open them in Magpie.";
+  } else if (p.r === "curator") {
+    title.textContent = "Help with " + name + "’s lists";
+    lede.textContent = "You'll be able to add and hide wishes, see who's getting what, and reserve gifts too.";
+  } else {
+    title.textContent = name + "’s wishlists";
+    lede.textContent = "See the lists and reserve a gift without " + (name || "them") + " knowing.";
+  }
+  document.title = title.textContent + " · Magpie";
+  // Safari won't open a universal link on its own domain, so the button uses the app's scheme.
+  document.getElementById("open").href = "magpie://join#" + hash;
+  document.getElementById("ok").classList.remove("hidden");
+})();
+</script>
+</body>
+</html>

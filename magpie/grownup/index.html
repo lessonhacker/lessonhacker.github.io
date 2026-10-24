@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Look after their lists · Magpie</title>
+<meta name="description" content="Someone has asked you to look after their Magpie wishlists.">
+<meta property="og:title" content="Magpie">
+<meta property="og:description" content="Someone has asked you to look after their Magpie wishlists.">
+<meta property="og:image" content="https://lessonhacker.github.io/magpie/assets/og-1200x630.png">
+<meta property="og:site_name" content="Magpie">
+<meta name="robots" content="noindex">
+<link rel="apple-touch-icon" href="/magpie/assets/apple-touch-icon.png">
+<link rel="stylesheet" href="/magpie/assets/style.css">
+</head>
+<body>
+<main>
+  <img class="mark" src="/magpie/assets/icon-512.png" alt="">
+  <h1 id="title">Look after their lists</h1>
+  <p class="lede" id="lede">They'd like you to look after their Magpie wishlists, so the family can see them and the surprises stay secret.</p>
+  <div class="card">
+    <h2>Here's how</h2>
+    <ol>
+      <li>Get Magpie on your iPhone or iPad.</li>
+      <li>Tap <strong>Set up lists for my child</strong> and type <span class="who">their</span> name.</li>
+      <li>Let <span class="who">them</span> scan the code on your screen with their iPhone or iPad.</li>
+    </ol>
+  </div>
+  <p class="small">Everything <span class="who">they've</span> added already moves across to the new lists.</p>
+  <p class="foot"><a href="/magpie/">About Magpie</a> · <a href="/magpie/privacy/">Privacy</a></p>
+</main>
+<script>
+// "#n=Penelope": a first name only, read in the browser and never sent anywhere.
+(function () {
+  var m = /(?:^|&)n=([^&]*)/.exec(location.hash.slice(1));
+  var name = m ? decodeURIComponent(m[1]).slice(0, 40).trim() : "";
+  if (!name) return;
+  document.getElementById("title").textContent = "Look after " + name + "’s lists";
+  document.getElementById("lede").textContent = name + " would like you to look after their Magpie wishlists, so the family can see them and the surprises stay secret.";
+  var who = document.querySelectorAll(".who");
+  who[0].textContent = name + "’s"; who[1].textContent = name; who[2].textContent = name + " has";
+  document.title = document.getElementById("title").textContent + " · Magpie";
+})();
+</script>
+</body>
+</html>
